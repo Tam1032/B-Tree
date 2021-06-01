@@ -10,10 +10,35 @@ struct Student{
 };
 struct Node{
   Student keys[M];
-  Node *children[M+1];
+  Node *children[M+1]={NULL};
   int nkeys, leaf;
 };
 typedef Node *Tree;
+void createTree(Tree &root);
+int insert(Student arr[],int &n,Student newSt);
+Tree split(Tree &p, Tree q);
+int binarySearch(Student arr[], int n, Student find);
+void addNode(Tree &root, Tree q, Student x);
+void printMin(Tree &root);
+int main(){
+  ifstream fi("input.txt");
+  Tree root,q;
+  createTree(root);
+  createTree(q);
+  int n;
+  fi>>n;
+  Student temp;
+  for(int i=0;i<n;i++){
+    fi.ignore();
+    fi>>temp.ID;
+    fi>>temp.name;
+    fi>>temp.rank;
+    addNode(root,q,temp);
+  }
+  printMin(root);
+  fi.close();
+  return 0;
+}
 void createTree(Tree &root){
   root=NULL;
 }
@@ -86,35 +111,16 @@ void addNode(Tree &root, Tree q, Student x) {
     if (q == NULL)
     root = p;
     return;
+}
+void printMin(Tree &root){
+  int i;
+  for(i=0;i<root->nkeys;i++){
+    if(root->children[i]!=NULL)
+      printMin(root->children[i]);
+    cout<<root->keys[i].ID<<"\t";
+    cout<<root->keys[i].name<<"\t";
+    cout<<root->keys[i].rank<<endl;
   }
-int main(){
-  ifstream fi("input.txt");
-  ofstream fo("output.txt");
-  Tree root,q;
-  createTree(root);
-  createTree(q);
-  int n;
-  fi>>n;
-  Student temp;
-  for(int i=0;i<n;i++){
-    fi.ignore();
-    fi>>temp.ID;
-    fi>>temp.name;
-    fi>>temp.rank;
-    addNode(root,q,temp);
-  }
-  fo<<root->nkeys<<"\n";
-  for(int i=0;i<root->nkeys;i++){
-    fo<<root->keys[i].ID<<"\t";
-    fo<<root->keys[i].name<<"\t";
-    fo<<root->keys[i].rank<<endl;
-  }
-  for(int i=0;i<root->children[1]->nkeys;i++){
-    fo<<root->children[1]->keys[i].ID<<"\t";
-    fo<<root->children[1]->keys[i].name<<"\t";
-    fo<<root->children[1]->keys[i].rank<<endl;
-  }
-  fi.close();
-  fo.close();
-  return 0;
+  if(root->children[i]!=NULL)
+    printMin(root->children[i]);
 }
